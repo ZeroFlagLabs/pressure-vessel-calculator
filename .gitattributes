@@ -1,0 +1,8 @@
+* text=auto
+*.bat text eol=crlf
+*.png binary
+*.ico binary
+
+src/calculator.py -text
+src/cases.py -text
+src/input_validation.py -text

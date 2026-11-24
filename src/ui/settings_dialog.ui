@@ -1,0 +1,232 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui version="4.0">
+ <class>settingsDialog</class>
+ <widget class="QDialog" name="settingsDialog">
+  <property name="windowTitle">
+   <string>Settings | Pressure Vessel Calculator</string>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>510</width>
+    <height>360</height>
+   </size>
+  </property>
+  <layout class="QVBoxLayout" name="settingsLayout">
+   <item>
+    <widget class="QLabel" name="heading">
+     <property name="text">
+      <string>Settings</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-size: 17px; font-weight: 700; color: #164f8a;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="settings_heading_rule">
+     <property name="frameShape">
+      <enum>QFrame::Shape::HLine</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Plain</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="settings_app_name">
+     <property name="text">
+      <string>Pressure Vessel Calculator</string>
+     </property>
+     <property name="styleSheet">
+      <string>color:#71849a; font-size:11px;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="settings_tabs">
+     <widget class="QWidget" name="assumptions_tab">
+      <attribute name="title">
+       <string>Assumptions</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="assumptionsLayout">
+       <item>
+        <widget class="QScrollArea" name="assumptions_scroll">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Shape::NoFrame</enum>
+         </property>
+         <widget class="QWidget" name="assumptions_content">
+          <layout class="QVBoxLayout" name="assumptionsContentLayout">
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
+           <item><widget class="QLabel" name="assumptions_heading_0"><property name="text"><string>Scope and geometry</string></property><property name="styleSheet"><string>font-weight:600; color:#164f8a;</string></property></widget></item><item><widget class="QLabel" name="assumptions_text_0"><property name="textFormat"><enum>Qt::TextFormat::RichText</enum></property><property name="text"><string>&lt;html&gt;&lt;body&gt;&lt;p style="margin:0 0 10px 0;"&gt;• Cylindrical pressure vessel stress assessment for internal or external pressure, open or capped ends and optional uniform axial load.&lt;/p&gt;&lt;p style="margin:0 0 10px 0;"&gt;• Any two geometry dimensions may be entered; the third is derived. For independent OD and ID, the original minimum OD / maximum ID basis is retained. For diameter and thickness inputs, physically possible geometries are evaluated and the geometry governing the largest utilisation is selected. All stresses refer to that one geometry, not independent envelopes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
+<item><spacer name="assumptionsSectionGap1"><property name="orientation"><enum>Qt::Orientation::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>20</height></size></property></spacer></item><item><widget class="QLabel" name="assumptions_heading_1"><property name="text"><string>Calculation basis</string></property><property name="styleSheet"><string>font-weight:600; color:#164f8a;</string></property></widget></item><item><widget class="QLabel" name="assumptions_text_1"><property name="textFormat"><enum>Qt::TextFormat::RichText</enum></property><property name="text"><string>&lt;html&gt;&lt;body&gt;&lt;p style="margin:0 0 10px 0;"&gt;• Thin-wall theory applies when R/t &amp;gt; 10; otherwise thick-wall Lamé equations apply. Thick-wall equivalent stresses are evaluated at the bore.&lt;/p&gt;&lt;p style="margin:0 0 10px 0;"&gt;• Positive axial load is tension; negative axial load is compression. Temperature derating applies to working pressure only.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
+<item><spacer name="assumptionsSectionGap2"><property name="orientation"><enum>Qt::Orientation::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>20</height></size></property></spacer></item><item><widget class="QLabel" name="assumptions_heading_2"><property name="text"><string>Interpretation</string></property><property name="styleSheet"><string>font-weight:600; color:#164f8a;</string></property></widget></item><item><widget class="QLabel" name="assumptions_text_2"><property name="textFormat"><enum>Qt::TextFormat::RichText</enum></property><property name="text"><string>&lt;html&gt;&lt;body&gt;&lt;p style="margin:0 0 10px 0;"&gt;• PASS means the individual stress utilisation is no greater than 1.00. External-pressure buckling and full code compliance are not assessed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
+           <item>
+            <spacer name="assumptions_inner_spacer">
+             <property name="orientation">
+              <enum>Qt::Orientation::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+          <property name="styleSheet">
+           <string>QWidget#assumptions_content { background: white; }</string>
+          </property>
+         </widget>
+         <property name="styleSheet">
+          <string>QScrollArea#assumptions_scroll { background: white; border: none; } QScrollArea#assumptions_scroll &gt; QWidget &gt; QWidget { background: white; }</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="references_tab">
+      <attribute name="title">
+       <string>References</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="referencesLayout">
+       <item>
+        <widget class="QScrollArea" name="references_scroll">
+         <property name="widgetResizable"><bool>true</bool></property>
+         <property name="frameShape"><enum>QFrame::Shape::NoFrame</enum></property>
+         <widget class="QWidget" name="references_content">
+          <layout class="QVBoxLayout" name="referencesContentLayout">
+           <property name="leftMargin"><number>3</number></property>
+           <property name="rightMargin"><number>3</number></property>
+           <property name="topMargin"><number>3</number></property>
+           <property name="bottomMargin"><number>3</number></property>
+           <item>
+            <widget class="QLabel" name="references_heading">
+             <property name="text"><string>Reference publications</string></property>
+             <property name="styleSheet"><string>font-weight:600; color:#164f8a;</string></property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="references_text">
+             <property name="textFormat"><enum>Qt::TextFormat::RichText</enum></property>
+             <property name="text"><string>&lt;html&gt;&lt;body&gt;&lt;p style="margin:0 0 10px 0;"&gt;• Roark’s Formulas for Stress and Strain, 6th Edition, Tables 28 and 32: thin-wall and thick-wall cylindrical stress equations.&lt;/p&gt;&lt;p style="margin:0 0 10px 0;"&gt;• API 6X, 2nd Edition: stress allowables.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string></property>
+             <property name="wordWrap"><bool>true</bool></property>
+            </widget>
+           </item>
+           <item><spacer name="referencesSectionGap"><property name="orientation"><enum>Qt::Orientation::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>20</height></size></property></spacer></item><item>
+            <widget class="QLabel" name="criteria_heading">
+             <property name="text"><string>Adopted stress allowables</string></property>
+             <property name="styleSheet"><string>font-weight:600; color:#164f8a;</string></property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="criteria_text">
+             <property name="textFormat"><enum>Qt::TextFormat::RichText</enum></property>
+             <property name="text"><string>&lt;html&gt;&lt;body&gt;&lt;p style="margin:0 0 10px 0;"&gt;• Working allowable: 2/3 × material yield × temperature derating factor.&lt;/p&gt;&lt;p style="margin:0 0 10px 0;"&gt;• Test allowable: 0.9 × material yield.&lt;/p&gt;&lt;p style="margin:0 0 10px 0;"&gt;• Shear allowable: 0.6 × the corresponding stress allowable.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string></property>
+             <property name="wordWrap"><bool>true</bool></property>
+            </widget>
+           </item>
+           <item><spacer name="referencesClosingNoteGap"><property name="orientation"><enum>Qt::Orientation::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>20</height></size></property></spacer></item>
+           <item>
+            <widget class="QLabel" name="references_note">
+             <property name="text"><string>The calculator supports preliminary stress assessment and cross-checking; it does not establish full code compliance. Reference publications are not distributed with the application.</string></property>
+             <property name="wordWrap"><bool>true</bool></property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="referencesSpacer">
+             <property name="orientation"><enum>Qt::Orientation::Vertical</enum></property>
+             <property name="sizeType"><enum>QSizePolicy::Expanding</enum></property>
+             <property name="sizeHint" stdset="0"><size><width>20</width><height>0</height></size></property>
+            </spacer>
+           </item>
+          </layout>
+          <property name="styleSheet"><string>QWidget#references_content { background: white; }</string></property>
+         </widget>
+         <property name="styleSheet"><string>QScrollArea#references_scroll { background: white; border: none; } QScrollArea#references_scroll &gt; QWidget &gt; QWidget { background: white; }</string></property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="updates_tab">
+      <attribute name="title"><string>Updates</string></attribute>
+      <layout class="QVBoxLayout" name="updatesLayout">
+       <item><widget class="QLabel" name="current_version"><property name="text"><string>Current version: v1.0.0</string></property></widget></item>
+       <item><spacer name="updates_version_to_checkbox_gap"><property name="orientation"><enum>Qt::Orientation::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>12</height></size></property></spacer></item><item><widget class="QCheckBox" name="check_on_launch"><property name="text"><string>Automatically check for updates on launch</string></property></widget></item>
+       <item><spacer name="updates_checkbox_to_information_gap"><property name="orientation"><enum>Qt::Orientation::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>12</height></size></property></spacer></item><item><widget class="QLabel" name="update_information"><property name="text"><string>Checks stable GitHub Releases in the background. Updates are not downloaded or installed automatically; the application remains portable.</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
+       <item><spacer name="updates_information_to_status_gap"><property name="orientation"><enum>Qt::Orientation::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>8</height></size></property></spacer></item><item><widget class="QLabel" name="update_status"><property name="text"><string>Not checked yet</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
+       <item><spacer name="updates_status_to_buttons_gap"><property name="orientation"><enum>Qt::Orientation::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>14</height></size></property></spacer></item><item><layout class="QHBoxLayout" name="updateButtonLayout">
+        <item><widget class="QPushButton" name="check_now_button"><property name="text"><string>Check for updates</string></property></widget></item>
+        <item><widget class="QPushButton" name="open_release_button"><property name="text"><string>Download update</string></property><property name="enabled"><bool>false</bool></property></widget></item>
+        <item><spacer name="updateButtonSpacer"><property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>0</height></size></property></spacer></item>
+       </layout></item>
+       <item><spacer name="updatesSpacer"><property name="orientation"><enum>Qt::Orientation::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property></spacer></item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="about_tab">
+      <attribute name="title">
+       <string>About</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="aboutLayout">
+       <item>
+        <widget class="QLabel" name="about_text">
+         <property name="text">
+          <string>ZeroFlagLabs Pressure Vessel Calculator  ·  v1.0.0
+
+Cylindrical pressure vessel stress assessment for internal and external pressure, open and capped ends, and optional axial loading.
+
+Original application code: MIT Licence.
+PySide6/Qt and other third-party components retain their own licences.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item><spacer name="about_github_section_gap"><property name="orientation"><enum>Qt::Orientation::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>16</height></size></property></spacer></item><item><widget class="QLabel" name="github_link"><property name="text"><string>Project on GitHub</string></property></widget></item>
+       <item>
+        <spacer name="aboutSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttons">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Close</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

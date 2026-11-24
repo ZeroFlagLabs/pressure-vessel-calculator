@@ -1,0 +1,16 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+_ui_preview/
+docs/private/
+references/
+releases/
+dist/
+build/
+*.spec
+*.exe
+*.zip
+*.lnk
+/_*.py
