@@ -1,5 +1,6 @@
 """Printable report, concept B. No screen captures or recalculation."""
 from datetime import datetime
+from app_info import APP_VERSION
 from pathlib import Path
 from PySide6.QtCore import Qt,QRectF
 from PySide6.QtGui import QColor,QFont,QFontMetrics,QPainter,QPen,QPixmap
@@ -113,7 +114,7 @@ def render_snapshot(window,timestamp=None):
     try:
         p.setPen(QPen(QColor("#9FBBD5"),1));p.drawRect(QRectF(5,5,W-11,H-11))
         text(28,14,620,40,"Pressure Vessel Calculator",size=23,bold=True,colour=BLUE)
-        text(650,17,288,31,timestamp.strftime("%d %b %Y  %H:%M")+"  |  v1.0.0",size=11,colour=MUTED,align="right")
+        text(650,17,288,31,timestamp.strftime("%d %b %Y  %H:%M")+"  |  v"+APP_VERSION,size=11,colour=MUTED,align="right")
         line(61)
         heading(GEOMETRY_X,76,INPUT_WIDTH,"GEOMETRY")
         for i,(label,value) in enumerate(geom):pair(GEOMETRY_X,101+24*i,INPUT_WIDTH,label,value,130)

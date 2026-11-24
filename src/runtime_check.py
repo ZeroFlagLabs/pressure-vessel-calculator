@@ -9,6 +9,7 @@ from PySide6.QtCore import Qt,QEventLoop,QTimer,QSettings
 from PySide6.QtWidgets import QApplication,QComboBox,QTextBrowser,QFileDialog
 from PySide6.QtGui import QPixmap
 from cases import calculate_case
+from app_info import APP_VERSION
 from inspect_results import case_steps
 from snapshot import render_snapshot,report_data
 import update_checker
@@ -21,7 +22,22 @@ def run(app,w):
         assert (w.width(),w.height())==(920,471)
         assert w.result is None and not w.inspect_button.isEnabled()
         assert not w.windowIcon().isNull()
-        assert w.has_example_loads()
+        expected_startup={"yield_strength":0,"working_pressure":0,"test_pressure":0,"derating_factor":1,"axial_load":0}
+        assert all(w.fields[k].value()==v for k,v in expected_startup.items())
+        assert w.has_startup_loads()
+        assert all(not w.dims[k].present() for k in ("od","id","t"))
+        assert not w.copy_button.isEnabled() and not w.save_button.isEnabled()
+        assert "examples" not in w.statusBar().currentMessage()
+        if output:w.grab().save(str(output.with_name(output.stem+"_startup.png")))
+        w.dims["od"].a.setValue(10);w.dims["id"].a.setValue(8)
+        assert w.result is None and not w.inspect_button.isEnabled()
+        assert not w.copy_button.isEnabled() and not w.save_button.isEnabled()
+        # Zero pressure remains a valid engineering input once yield and geometry are supplied.
+        w.fields["yield_strength"].setValue(75000)
+        assert w.result==calculate_case(dict(od=10,id=8,yield_strength=75000,working_pressure=0,test_pressure=0,derating_factor=1,axial_load=0,pressure_type="internal",end_condition="capped"))
+        w.reset()
+        assert w.fields["yield_strength"].value()==75000 and w.result is None
+        report["startup_defaults"]="passed"
         assert not (w.windowFlags() & Qt.WindowType.WindowMaximizeButtonHint)
         with TemporaryDirectory() as tmp:
             temp=Path(tmp);w.update_checker.prefs=QSettings(str(temp/"settings.ini"),QSettings.Format.IniFormat)
@@ -93,6 +109,7 @@ def run(app,w):
             d=w.make_settings();d.show();app.processEvents()
             assert [d.settings_tabs.tabText(i) for i in range(4)]==["Assumptions","References","Updates","About"]
             assert "MIT Licence" in d.about_text.text()
+            assert "v"+APP_VERSION in d.about_text.text() and d.current_version.text()=="Current version: v"+APP_VERSION
             assert d.github_link.openExternalLinks()
             assert d.check_on_launch.isChecked()
             if output:

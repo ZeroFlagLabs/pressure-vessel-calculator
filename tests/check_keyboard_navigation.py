@@ -25,6 +25,7 @@ def chain():
         assert target() is seq[i],(i,target(),seq[i])
     return len(seq)
 count=chain()
+w.fields["yield_strength"].setValue(75000)
 for pair in (("od","id"),("od","t"),("id","t")):
     w.reset();w.ready=False
     vals={"od":D("10"),"id":D("8"),"t":D("1")}

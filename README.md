@@ -8,6 +8,8 @@ Download the [latest Windows portable ZIP](https://github.com/ZeroFlagLabs/press
 
 ## Features
 
+On launch, material yield and both pressures default to zero; temperature derating defaults to 1.00 and additional axial load to zero. Reset dimensions retains the entered material and loading values.
+
 - Enter any two of OD, ID and wall thickness in inches. Independent symmetrical tolerances or limits; third dimension derived.
 - Material yield, temperature derating, working/test pressures, optional axial loading and internal/external, open/capped conditions.
 - Automatic thin/thick analysis, working and test results, mathematical inspection, copy/save PNG report.

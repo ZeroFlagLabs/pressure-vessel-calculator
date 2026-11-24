@@ -338,8 +338,8 @@ class MainWindow(QMainWindow):
         self.save_button=QPushButton("Save PNG...");self.save_button.clicked.connect(self.save)
         for w in [self.inspect_button,reset,self.copy_button,self.save_button]:w.setFixedWidth(112)
         footer.addWidget(self.inspect_button);footer.addWidget(reset);footer.addStretch();footer.addWidget(self.copy_button);footer.addWidget(self.save_button);outer.addLayout(footer)
-        self.example_loads={"yield_strength":"75000","derating_factor":"1","working_pressure":"10000","test_pressure":"15000","axial_load":"0"}
-        for k,v in self.example_loads.items():self.fields[k].setText(v)
+        self.startup_loads={"yield_strength":"0","derating_factor":"1","working_pressure":"0","test_pressure":"0","axial_load":"0"}
+        for k,v in self.startup_loads.items():self.fields[k].setText(v)
         self.fields["pressure_type"].setCurrentText("internal");self.fields["end_condition"].setCurrentText("capped")
         for button in self.findChildren(QPushButton):button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         sequence=[spin for d in self.dims.values() for spin in (d.a,d.b)]
@@ -402,13 +402,13 @@ class MainWindow(QMainWindow):
             self.thickness.setText(f"Wall thickness used: {(od-idd)/2:.3f} in  |  R/t: {format_ratio(self.result['ratio'])}")
             self.statusBar().showMessage("Calculation complete. Verify material and loading inputs.")
         except (ValueError,ArithmeticError) as e:
-            self.statusBar().showMessage(str(e).replace("\n","  |  ")+(" Initial loading values are examples; verify before use." if self.used is None else ""))
+            self.statusBar().showMessage(str(e).replace("\n","  |  "))
             if self.used is None:
                 if self.derived and not all(self.dims[k].present() for k in self.dims if k!=self.derived):self.dims[self.derived].put(0,0)
                 self.geom_hint.setText("Enter any two dimensions; the third is derived." if not self.derived else "* Derived dimension • check entered dimensions")
         self.diagram.update();self.render()
-    def has_example_loads(self):
-        return all(self.fields[k].value()==float(v) for k,v in self.example_loads.items())
+    def has_startup_loads(self):
+        return all(self.fields[k].value()==float(v) for k,v in self.startup_loads.items())
     def render(self):
         for idx,key in enumerate(["working","test"]):
             d=self.result[key] if self.result else None
