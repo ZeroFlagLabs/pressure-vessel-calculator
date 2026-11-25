@@ -138,6 +138,8 @@ def run(app,w):
             assert "identical Von Mises and maximum shear" in d.assumptions_text_1.text()
             assert "must not" not in d.assumptions_text_1.text()
             assert "<table" not in d.references_text.text()
+            for table_number in ("28","32"):
+                assert f'<p style="margin:0 0 10px 8px;">- Table {table_number}:' in d.references_text.text()
             for expected in ("Table 28","Table 32","1a (internal, open)","1b (internal, capped)","1c (external, open)","1d (external, capped)"):
                 assert expected in d.references_text.text(),expected
             report["settings_wording"]="passed"
