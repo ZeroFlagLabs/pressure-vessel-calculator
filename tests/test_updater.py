@@ -47,7 +47,7 @@ class UpdateRedirectTests(unittest.TestCase):
         self.assertEqual(c.release_url, 'https://github.com/ZeroFlagLabs/pressure-vessel-calculator/releases/tag/v9.2.3')
 
     def test_current_or_older_version_is_up_to_date(self):
-        for tag in ('v'+APP_VERSION, 'v1.0.0', 'v0.9.1', 'v0.10.0'):
+        for tag in ('v'+APP_VERSION, 'v1.3.0', 'v1.0.2', 'v1.0.0', 'v0.9.1', 'v0.10.0'):
             c = self.check_result('https://github.com/ZeroFlagLabs/pressure-vessel-calculator/releases/tag/'+tag)
             self.assertEqual(c.status, 'Up to date.')
             self.assertIsNone(c.release_url)
