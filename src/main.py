@@ -8,6 +8,7 @@ from PySide6.QtCore import QFile,QIODevice,QTimer,QUrl
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtGui import QIcon, QFont, QColor, QPainter, QPen, QPixmap, QShortcut, QKeySequence
 from PySide6.QtWidgets import *
+from dialog_position import exec_centered
 from cases import calculate_case
 from input_validation import validate_inputs
 from geometry_selection import select_geometry
@@ -483,14 +484,14 @@ class MainWindow(QMainWindow):
     def update_notice(self):
         if self.update_checker.release_url:self.statusBar().showMessage(self.update_checker.status)
     def settings(self):
-        d=self.make_settings();d.exec()
+        d=self.make_settings();exec_centered(d,self)
     def make_inspector(self):
         if not self.result:return None
         from inspect_results import build_inspect_results
         return build_inspect_results(self.raw,self.result,self)
     def inspect(self):
         d=self.make_inspector()
-        if d is not None:d.exec()
+        if d is not None:exec_centered(d,self)
     def snapshot(self):
         from snapshot import render_snapshot
         return render_snapshot(self)
