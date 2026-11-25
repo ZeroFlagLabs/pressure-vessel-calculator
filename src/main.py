@@ -137,7 +137,7 @@ class Choice(QWidget):
 class Dimension:
     def __init__(self,name,changed):
         self.name=name; self.mode="pm"; self.derived=False; self._derived_bounds=None; self.changed=changed
-        self.label=text(name); self.label.setFixedWidth(100)
+        self.label=text(name); self.label.setFixedWidth(93)
         self.a=DimSpin(); self.b=DimSpin()
         self.tags=[]
         for spin,word in ((self.a,"MIN"),(self.b,"MAX")):
@@ -312,7 +312,7 @@ class MainWindow(QMainWindow):
             ("working_pressure","Working pressure","psi",500,0,1e12,6),
             ("test_pressure","Test pressure","psi",500,0,1e12,6),
             ("axial_load","Axial load","lbf",1000,-1e12,1e12,6)]:
-            w=LoadSpin(unit,step,lo,hi,decimals);w.notify=self.changed;self.fields[key]=w;lab=text(name);lab.setFixedWidth(100);holder=QWidget();holder.setFixedSize(108,30);hl=QHBoxLayout(holder);hl.setContentsMargins(0,0,2,0);hl.setSpacing(0);hl.addWidget(w);f.addRow(lab,holder)
+            w=LoadSpin(unit,step,lo,hi,decimals);w.notify=self.changed;self.fields[key]=w;lab=text(name);lab.setFixedWidth(93);holder=QWidget();holder.setFixedSize(108,30);hl=QHBoxLayout(holder);hl.setContentsMargins(0,0,2,0);hl.setSpacing(0);hl.addWidget(w);f.addRow(lab,holder)
             if key=="derating_factor":w.setToolTip("Temperature derating factor")
             if key=="axial_load":w.setToolTip("Positive: tension; negative: compression")
         for key,name,items in [("pressure_type","Pressure direction",["external","internal"]),("end_condition","End configuration",["capped","open"])]:
@@ -341,10 +341,10 @@ class MainWindow(QMainWindow):
         self.statusBar().setSizeGripEnabled(False);self.statusBar().setFixedHeight(21);self.statusBar().setStyleSheet("QStatusBar {background:#f0f0f0;color:#000000;}");self.statusBar().setFont(QFont("Segoe UI",9))
         footer=QHBoxLayout();footer.setSpacing(8)
         self.inspect_button=QPushButton("Inspect results");self.inspect_button.clicked.connect(self.inspect)
-        reset=QPushButton("Reset dimensions");reset.clicked.connect(self.reset)
+        reset=QPushButton("Reset");reset.clicked.connect(self.reset)
         self.copy_button=QPushButton("Copy snapshot");self.copy_button.clicked.connect(self.copy)
         self.save_button=QPushButton("Save PNG...");self.save_button.clicked.connect(self.save)
-        for w in [self.inspect_button,reset,self.copy_button,self.save_button]:w.setFixedWidth(112)
+        for w in [self.inspect_button,reset,self.copy_button,self.save_button]:w.setFixedSize(106,30)
         footer.addWidget(self.inspect_button);footer.addWidget(reset);footer.addStretch();footer.addWidget(self.copy_button);footer.addWidget(self.save_button);outer.addLayout(footer)
         self.startup_loads={"yield_strength":"0","derating_factor":"1","working_pressure":"0","test_pressure":"0","axial_load":"0"}
         for k,v in self.startup_loads.items():self.fields[k].setText(v)
@@ -365,7 +365,7 @@ class MainWindow(QMainWindow):
         self.inspect_button.setToolTip("Inspect results (Ctrl+I)")
         self.copy_button.setToolTip("Copy snapshot (Ctrl+Shift+C)")
         self.save_button.setToolTip("Save PNG (Ctrl+Shift+S)")
-        reset.setToolTip("Reset dimensions (Ctrl+R)")
+        reset.setToolTip("Reset (Ctrl+R)")
         gear.setToolTip("Settings (Ctrl+,)")
 
     def geometry_bounds(self):
@@ -437,6 +437,9 @@ class MainWindow(QMainWindow):
                 row.clear()
                 row.switch('pm')
             self.derived=None
+            for k,v in self.startup_loads.items():self.fields[k].setText(v)
+            self.fields["pressure_type"].setCurrentText("internal")
+            self.fields["end_condition"].setCurrentText("capped")
         finally:
             self.ready=True
         self.changed()
@@ -461,7 +464,7 @@ class MainWindow(QMainWindow):
             QTabBar::tab:selected { background:white; color:#1b3452; border-bottom-color:white; }
         """)
         d.setWindowModality(Qt.WindowModality.ApplicationModal)
-        d.buttons.button(QDialogButtonBox.StandardButton.Close).setFixedWidth(112)
+        d.buttons.button(QDialogButtonBox.StandardButton.Close).setFixedSize(106,30)
         d.buttons.rejected.connect(d.reject)
         checker=self.update_checker
         d.check_on_launch.setChecked(checker.enabled())

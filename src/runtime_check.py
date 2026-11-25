@@ -36,7 +36,7 @@ def run(app,w):
         w.fields["yield_strength"].setValue(75000)
         assert w.result==calculate_case(dict(od=10,id=8,yield_strength=75000,working_pressure=0,test_pressure=0,derating_factor=1,axial_load=0,pressure_type="internal",end_condition="capped"))
         w.reset()
-        assert w.fields["yield_strength"].value()==75000 and w.result is None
+        assert w.has_startup_loads() and w.result is None
         report["startup_defaults"]="passed"
         # The effective extra inset must persist through conversions, derived
         # disabled fields and reset, while the right-hand tag space stays intact.
@@ -74,13 +74,13 @@ def run(app,w):
             w.dims["od"].pm.click();assert w.dims["od"].bounds()==(D("5.997"),D("6.003"))
             w.reset();w.dims["od"].limits.click();w.dims["od"].a.setValue(6);assert w.result is None
             w.dims["od"].pm.click();assert w.dims["od"].a.value()==6 and w.dims["od"].b.value()==0
-            w.reset();w.dims["od"].a.setValue(10);w.dims["t"].a.setValue(1);w.dims["t"].b.setValue(.005)
+            w.reset();w.fields["yield_strength"].setValue(75000);w.fields["working_pressure"].setValue(10000);w.fields["test_pressure"].setValue(15000);w.dims["od"].a.setValue(10);w.dims["t"].a.setValue(1);w.dims["t"].b.setValue(.005)
             assert w.result and w.derived=="id" and abs((w.raw["od"]-w.raw["id"])/2-.995)<1e-12
             assert w.raw["od"]==10
             for key in ("working","test"):case_steps(w.raw,w.result,key)
             assert "Used OD" not in report_data(w)[0][0][0] # data remains geometry input, used pair separately printed
             assert not render_snapshot(w).isNull()
-            w.reset();w.dims["id"].a.setValue(8);w.dims["t"].a.setValue(1);w.dims["t"].b.setValue(.005)
+            w.reset();w.fields["yield_strength"].setValue(75000);w.fields["working_pressure"].setValue(10000);w.fields["test_pressure"].setValue(15000);w.dims["id"].a.setValue(8);w.dims["t"].a.setValue(1);w.dims["t"].b.setValue(.005)
             assert w.result and w.derived=="od" and abs((w.raw["od"]-w.raw["id"])/2-.995)<1e-12
             count=0
             for od,id_ in ((10,8),(10,9.8),(21,19)):
@@ -88,6 +88,7 @@ def run(app,w):
                     for ends in ("open","capped"):
                         for load in (-25000,0,25000):
                             w.reset();w.ready=False
+                            for k,v in (("yield_strength",75000),("working_pressure",10000),("test_pressure",15000)):w.fields[k].setValue(v)
                             w.dims["od"].put(D(str(od)),0);w.dims["id"].put(D(str(id_)),0)
                             w.fields["pressure_type"].setCurrentText(pt);w.fields["end_condition"].setCurrentText(ends)
                             w.fields["axial_load"].setValue(load);w.fields["derating_factor"].setValue(.85)
@@ -96,7 +97,7 @@ def run(app,w):
                             for key in ("working","test"):case_steps(w.raw,w.result,key)
                             count+=1
             report["runtime_geometry_cases"]=count
-            w.reset();w.dims["od"].a.setValue(10);w.dims["id"].a.setValue(8)
+            w.reset();w.fields["yield_strength"].setValue(75000);w.fields["working_pressure"].setValue(10000);w.fields["test_pressure"].setValue(15000);w.dims["od"].a.setValue(10);w.dims["id"].a.setValue(8)
             w.fields["pressure_type"].setCurrentText("internal");w.fields["end_condition"].setCurrentText("capped")
             w.fields["derating_factor"].setValue(1);w.fields["axial_load"].setValue(0)
             pix=render_snapshot(w,datetime(2026,11,24,21))

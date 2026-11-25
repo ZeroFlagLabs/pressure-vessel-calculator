@@ -270,6 +270,6 @@ def build_inspect_results(inputs,output,parent):
             browser.verticalScrollBar().setValue(pos)
     for precision,_ in controls.values():precision.currentIndexChanged.connect(redraw)
     close=dialog.findChild(QPushButton,"close_inspection")
-    close.setFixedWidth(112);close.clicked.connect(dialog.accept)
+    close.setFixedSize(106,30);close.clicked.connect(dialog.accept)
     redraw(3)
     return dialog
