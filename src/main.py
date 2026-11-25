@@ -1,5 +1,6 @@
 """Pressure Vessel Calculator main interface."""
 import sys
+from status_bar import CenteredStatusBar
 from pathlib import Path
 from decimal import Decimal as D
 from PySide6.QtCore import Qt, QSize, QRectF
@@ -338,7 +339,7 @@ class MainWindow(QMainWindow):
         body.setColumnStretch(0,1);body.setColumnStretch(1,1)
         for box in (geo,load,self.analysis,cards):box.setFixedWidth(446)
         self.frames=(geo,load,self.analysis,cards)
-        self.statusBar().setSizeGripEnabled(False);self.statusBar().setFixedHeight(21);self.statusBar().setStyleSheet("QStatusBar {background:#f0f0f0;color:#243d58;font: 9pt 'Segoe UI';}")
+        self.setStatusBar(CenteredStatusBar(self))
         footer=QHBoxLayout();footer.setSpacing(8)
         self.inspect_button=QPushButton("Inspect results");self.inspect_button.clicked.connect(self.inspect)
         reset=QPushButton("Reset");reset.clicked.connect(self.reset)
