@@ -12,6 +12,7 @@ from cases import calculate_case
 from input_validation import validate_inputs
 from geometry_selection import select_geometry
 from app_info import APP_TITLE,APP_VERSION,GITHUB_URL
+from spin_suffix import protect_suffix
 from update_checker import UpdateChecker
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent
@@ -76,6 +77,7 @@ class DimSpin(QDoubleSpinBox):
     def __init__(self):
         super().__init__(); self.setObjectName('geometry_spin'); self.setDecimals(12); self.setRange(0,1000000); self.setSingleStep(.001)
         self.setSuffix(" in"); self.setFixedSize(106,30); self.setKeyboardTracking(True)
+        protect_suffix(self)
         self.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.lineEdit().setTextMargins(INPUT_TEXT_INSET,0,0,0)
     def wheelEvent(self,event):
@@ -91,6 +93,7 @@ class LoadSpin(QDoubleSpinBox):
         super().__init__()
         self.setDecimals(decimals);self.setRange(-1e12,1e12)
         self.setSingleStep(step);self.setSuffix(" "+unit if unit else "")
+        protect_suffix(self)
         self.setFixedSize(106,30);self.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.lineEdit().setTextMargins(INPUT_TEXT_INSET,0,0,0)
         self._minimum_display=2 if not unit else 0
