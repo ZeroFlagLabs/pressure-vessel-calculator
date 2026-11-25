@@ -38,6 +38,27 @@ def run(app,w):
         w.reset()
         assert w.fields["yield_strength"].value()==75000 and w.result is None
         report["startup_defaults"]="passed"
+        # The effective extra inset must persist through conversions, derived
+        # disabled fields and reset, while the right-hand tag space stays intact.
+        def check_insets():
+            for dim in w.dims.values():
+                for spin in (dim.a,dim.b):
+                    margins=spin.lineEdit().textMargins()
+                    assert margins.left()==4 and margins.right()==(21 if dim.mode=="limits" else 0)
+            for key in expected_startup:
+                assert w.fields[key].lineEdit().textMargins().left()==4
+        check_insets()
+        w.sample()
+        check_insets()
+        for dim in w.dims.values():dim.switch("limits")
+        check_insets()
+        if output:w.grab().save(str(output.with_name(output.stem+"_limits.png")))
+        for dim in w.dims.values():dim.switch("pm")
+        check_insets()
+        w.reset();check_insets()
+        # Restore loading defaults before the existing sample and calculation checks.
+        for key,value in expected_startup.items():w.fields[key].setValue(value)
+        report["input_padding"]="passed"
         assert not (w.windowFlags() & Qt.WindowType.WindowMaximizeButtonHint)
         with TemporaryDirectory() as tmp:
             temp=Path(tmp);w.update_checker.prefs=QSettings(str(temp/"settings.ini"),QSettings.Format.IniFormat)

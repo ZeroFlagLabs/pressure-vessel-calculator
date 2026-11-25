@@ -16,6 +16,8 @@ from update_checker import UpdateChecker
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent
 ICONS=HERE/"resources/icons"
+# Fusion renders text 4 px nearer the border than the approved Windows 11 O-Ring style.
+INPUT_TEXT_INSET=4
 STYLE="""
 QWidget#surface {background:#f3f7fb;color:#1b3452;}
 QLabel {color:#1b3452;}
@@ -75,6 +77,7 @@ class DimSpin(QDoubleSpinBox):
         super().__init__(); self.setObjectName('geometry_spin'); self.setDecimals(12); self.setRange(0,1000000); self.setSingleStep(.001)
         self.setSuffix(" in"); self.setFixedSize(106,30); self.setKeyboardTracking(True)
         self.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.lineEdit().setTextMargins(INPUT_TEXT_INSET,0,0,0)
     def wheelEvent(self,event):
         event.ignore()
     def textFromValue(self,v):
@@ -89,6 +92,7 @@ class LoadSpin(QDoubleSpinBox):
         self.setDecimals(decimals);self.setRange(-1e12,1e12)
         self.setSingleStep(step);self.setSuffix(" "+unit if unit else "")
         self.setFixedSize(106,30);self.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.lineEdit().setTextMargins(INPUT_TEXT_INSET,0,0,0)
         self._minimum_display=2 if not unit else 0
         self.setKeyboardTracking(True)
         self.valueChanged.connect(self.inputChanged)
@@ -153,7 +157,7 @@ class Dimension:
         self.a.setToolTip("Nominal dimension" if self.mode=="pm" else "Minimum dimension")
         self.b.setToolTip("Symmetrical tolerance" if self.mode=="pm" else "Maximum dimension")
         for spin,tag in zip((self.a,self.b),self.tags):
-            spin.lineEdit().setTextMargins(0,0,21 if self.mode=="limits" else 0,0)
+            spin.lineEdit().setTextMargins(INPUT_TEXT_INSET,0,21 if self.mode=="limits" else 0,0)
             tag.setVisible(self.mode=="limits");tag.raise_()
     def present(self):return self.a.value()!=0 or self.b.value()!=0
     def bounds(self):
