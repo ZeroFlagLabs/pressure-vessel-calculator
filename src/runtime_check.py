@@ -133,7 +133,26 @@ def run(app,w):
             assert "buckling" not in d.assumptions_text_2.text().lower()
             assert "full code compliance" not in d.assumptions_text_2.text().lower()
             assert d.references_note.text()=="Reference publications are not distributed with the application."
+            assert "radial stress is zero at the bore" in d.assumptions_text_1.text()
+            assert "same radial location" in d.assumptions_text_1.text()
+            assert "identical Von Mises and maximum shear" in d.assumptions_text_1.text()
+            assert "must not" not in d.assumptions_text_1.text()
+            assert "<table" not in d.references_text.text()
+            for expected in ("Table 28","Table 32","1a (internal, open)","1b (internal, capped)","1c (external, open)","1d (external, capped)"):
+                assert expected in d.references_text.text(),expected
             report["settings_wording"]="passed"
+            from inspect_results import html_breakdown
+            from itertools import product
+            references=0
+            for thick,external,capped in product((False,True),repeat=3):
+                inputs=dict(od=10,id=6 if thick else 9.8,working_pressure=500,test_pressure=750,yield_strength=60000,derating_factor=1,axial_load=0,pressure_type="external" if external else "internal",end_condition="capped" if capped else "open")
+                result=calculate_case(inputs)
+                table=32 if thick else 28
+                case=({(False,False):"1a",(False,True):"1b",(True,False):"1c",(True,True):"1d"}[(external,capped)] if thick else "1c" if capped else "1b")
+                for key in ("working","test"):
+                    assert f"Calculation basis: Roark, 6th Edition, Table {table}, Case {case}" in html_breakdown(inputs,result,key,3)
+                    references+=1
+            report["roark_case_references"]=references
             assert "MIT Licence" in d.about_text.text()
             assert "v"+APP_VERSION in d.about_text.text() and d.current_version.text()=="Current version: v"+APP_VERSION
             assert d.github_link.openExternalLinks()

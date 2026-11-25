@@ -141,6 +141,18 @@ def case_steps(inputs,output,key,places=3):
         assert c["tau"] is None and c["uf_tau"] is None
     return dims,steps
 
+def roark_case_reference(inputs,output):
+    capped=inputs["end_condition"]=="capped"
+    external=inputs["pressure_type"]=="external"
+    if output["wall_type"]=="Thick Wall":
+        table=32
+        case={(False,False):"1a",(False,True):"1b",(True,False):"1c",(True,True):"1d"}[(external,capped)]
+    else:
+        table=28
+        case="1c" if capped else "1b"
+    return f"Roark, 6th Edition, Table {table}, Case {case}"
+
+
 def html_breakdown(inputs,output,key,places):
     c=output[key];dims,steps=case_steps(inputs,output,key,places)
     status="PASS" if c["uf_vm"]<=1 and (c["uf_tau"] is None or c["uf_tau"]<=1) else "FAIL"
@@ -150,7 +162,8 @@ def html_breakdown(inputs,output,key,places):
         '<table width="100%" cellspacing="0" cellpadding="0" style="margin:0;">',
         '<tr><td width="78%" valign="middle"><p style="font-size:12pt;color:#164f8a;margin:3px 0 4px 0;"><b>'+escape(heading)+'</b></p></td>',
         '<td align="right" valign="middle"><p style="font-size:12pt;color:'+colour+';margin:3px 0 4px 0;"><b>'+status+'</b></p></td></tr></table>',
-        '<p style="font-size:9pt;color:#657a91;margin:4px 0 12px 0;">'+escape(output["wall_type"]+(" (Lamé)" if output["wall_type"]=="Thick Wall" else " (Membrane)")+f" | VM utilisation: {c['uf_vm']:.2f}"+(f" | Shear utilisation: {c['uf_tau']:.2f}" if c["uf_tau"] is not None else ""))+'</p>',
+        '<p style="font-size:9pt;color:#657a91;margin:4px 0 0 0;">'+escape(output["wall_type"]+(" (Lamé)" if output["wall_type"]=="Thick Wall" else " (Membrane)")+f" | VM utilisation: {c['uf_vm']:.2f}"+(f" | Shear utilisation: {c['uf_tau']:.2f}" if c["uf_tau"] is not None else ""))+'</p>',
+        '<p style="font-size:9pt;color:#657a91;margin:0 0 12px 0;">Calculation basis: '+escape(roark_case_reference(inputs,output))+'</p>',
         _section_rule(),'<p style="font-size:10pt;margin:13px 0 18px 0;color:#164f8a;"><b>Input Values</b></p>',
         '<p style="font-size:1pt;margin:0 0 12px 0;">&nbsp;</p>',
         '<table cellspacing="0" cellpadding="3" width="100%" style="font-size:10pt;">']

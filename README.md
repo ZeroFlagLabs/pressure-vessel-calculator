@@ -1,6 +1,6 @@
 # Pressure Vessel Calculator
 
-A compact ZeroFlagLabs Windows engineering calculator for cylindrical vessel stress assessment. Version 2.0.0 continues the original v1.0–v1.3 application history, using the final v1.3 equations with the redesigned ZeroFlagLabs interface.
+A compact ZeroFlagLabs Windows engineering calculator for cylindrical vessel stress assessment. Version 2.0.2 continues the original v1.0–v1.3 application history, using the final v1.3 equations with the redesigned ZeroFlagLabs interface.
 
 ## Download
 
@@ -13,7 +13,7 @@ On launch, material yield and both pressures default to zero; temperature derati
 - Enter any two of OD, ID and wall thickness in inches. Independent symmetrical tolerances or limits; third dimension derived.
 - Material yield, temperature derating, working/test pressures, optional axial loading and internal/external, open/capped conditions.
 - Automatic thin/thick analysis, working and test results, mathematical inspection, copy/save PNG report.
-- Settings, reference publications and optional GitHub stable release checks. No automatic downloads or installation.
+- Settings, detailed Roark case references, case-specific calculation basis in Inspect Results and optional GitHub stable release checks. No automatic downloads or installation.
 
 The original OD/ID minimum-OD/maximum-ID calculation basis is retained. With diameter/thickness tolerances the selector respects physically possible diameter pairs and reports the geometry giving the largest utilisation across both pressure conditions. All results correspond to that one geometry, not independent extrema. See [engineering scope](docs/ENGINEERING_SCOPE.md).
 
@@ -23,8 +23,8 @@ Calculations are based on:
 
 **Roark’s Formulas for Stress and Strain (6th Edition)**
 
-- Table 28 → Thin-walled cylinders
-- Table 32 → Thick-walled cylinders
+- Table 28 → Thin-walled cylinders: case 1b (open), case 1c (capped), for either pressure direction
+- Table 32 → Thick-walled cylinders: cases 1a (internal/open), 1b (internal/capped), 1c (external/open), 1d (external/capped)
 
 Allowable stresses are based on:
 
