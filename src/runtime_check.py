@@ -108,6 +108,11 @@ def run(app,w):
             d.close()
             d=w.make_settings();d.show();app.processEvents()
             assert [d.settings_tabs.tabText(i) for i in range(4)]==["Assumptions","References","Updates","About"]
+            assert "PASS means the individual stress utilisation is no greater than 1.00." in d.assumptions_text_2.text()
+            assert "buckling" not in d.assumptions_text_2.text().lower()
+            assert "full code compliance" not in d.assumptions_text_2.text().lower()
+            assert d.references_note.text()=="Reference publications are not distributed with the application."
+            report["settings_wording"]="passed"
             assert "MIT Licence" in d.about_text.text()
             assert "v"+APP_VERSION in d.about_text.text() and d.current_version.text()=="Current version: v"+APP_VERSION
             assert d.github_link.openExternalLinks()
