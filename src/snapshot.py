@@ -10,28 +10,21 @@ GEOMETRY_X,MATERIAL_X,INPUT_WIDTH=28,364,308
 INK,MUTED,BLUE,RULE="#243D58","#657A91","#164F8A","#D8E1EA"
 GREEN,RED="#18744F","#B42318"
 
-def fmt_dimension(spin):
-    v=spin.decimal()
-    places=max(3,-v.normalize().as_tuple().exponent)
-    return f"{v:.{places}f}"
+def fmt_dimension(value):
+    places=max(3,-value.normalize().as_tuple().exponent)
+    return f"{value:.{places}f}"
+
 
 def geometry_rows(window):
     rows=[]
     for dim in window.dims.values():
-        if dim.derived:
-            lo,hi=dim.bounds()
-            vals=((lo+hi)/2,(hi-lo)/2) if dim.mode=="pm" else (lo,hi)
-            a,b=(f"{v:.{max(3,-v.normalize().as_tuple().exponent)}f}" for v in vals)
-            zero=vals[1]==0
-        else:
-            a,b=fmt_dimension(dim.a),fmt_dimension(dim.b)
-            zero=dim.b.decimal()==0
-        if dim.mode=="pm":
-            value=f"{a} in" if zero else f"{a} ± {b} in"
-        else:
-            value=f"{a} to {b} in"
+        lo,hi=dim.bounds()
+        nominal,tolerance=(lo+hi)/2,(hi-lo)/2
+        a,b=fmt_dimension(nominal),fmt_dimension(tolerance)
+        value=f"{a} in" if tolerance==0 else f"{a} \u00b1 {b} in"
         rows.append((dim.name+(" (derived)" if dim.derived else ""),value))
     return rows
+
 
 def report_data(window):
     if window.result is None:raise ValueError("A valid calculation is required.")

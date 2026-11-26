@@ -1,7 +1,11 @@
 # Pressure Vessel Calculator
 
-A compact ZeroFlagLabs Windows engineering calculator for cylindrical vessel stress assessment. Version 2.0.8 continues the original v1.0–v1.3 application history, using the final v1.3 equations with the redesigned ZeroFlagLabs interface.
+A compact ZeroFlagLabs Windows engineering calculator for cylindrical vessel stress assessment. Version 2.0.9 continues the original v1.0–v1.3 application history, using the final v1.3 equations with the redesigned ZeroFlagLabs interface.
 
+
+## v2.0.9 report tolerance formatting
+
+Report dimensions use exact nominal and symmetrical tolerance values regardless of input mode, omitting zero tolerances. Derived identification and governing geometry are retained. Calculations unchanged.
 
 ## v2.0.8 status bar centring
 
