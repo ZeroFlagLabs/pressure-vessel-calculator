@@ -23,7 +23,7 @@ ICONS=HERE/"resources/icons"
 INPUT_TEXT_INSET=4
 STYLE="""
 QWidget#surface {background:#f3f7fb;color:#1b3452;}
-QLabel {color:#1b3452;}
+QLabel {color:#174675;}
 QGroupBox {background:#ffffff;border:1px solid #d8e4f0;border-radius:6px;margin-top:13px;padding:5px 7px 5px;font-weight:600;color:#174675;}
 QGroupBox::title {subcontrol-origin:margin;subcontrol-position:top left;left:10px;top:2px;padding:0 4px;color:#164f8a;}
 QLineEdit,QDoubleSpinBox,QAbstractSpinBox,QComboBox {background:white;border:1px solid #b9cce1;border-radius:4px;min-height:26px;padding:1px 4px;color:#243d58;}
@@ -49,7 +49,7 @@ QPushButton#mode:focus {border:1px solid #258aca;}
 QPushButton#mode:checked {background:#176bc0;color:white;border-color:#176bc0;}
 QPushButton#mode:disabled {background:#e3e8ee;color:#8190a1;border-color:#c4cdd8;}
 QRadioButton#case_radio {color:#1b3452;spacing:5px;}
-QLabel#title {font-size:19px;font-weight:700;color:#123b6c;}
+QLabel#title {font-size:19px;font-weight:700;color:#123b7c;}
 QLabel#version {font-size:11px;color:#6c7e94;}
 QLabel#muted {font-size:11px;color:#667c94;}
 QLabel#metric {font-size:13px;font-weight:600;color:#164f8a;}
