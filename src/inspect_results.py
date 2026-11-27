@@ -3,11 +3,12 @@ from html import escape
 from dataclasses import dataclass
 import math
 from pathlib import Path
+from dialog_theme import apply_dialog_theme, return_focus_after_selection
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QFile,QIODevice
-from PySide6.QtWidgets import QTextBrowser,QComboBox,QPushButton,QLabel,QTabWidget,QStyle,QStyledItemDelegate
-from PySide6.QtGui import QFont,QColor,QPainter
-from PySide6.QtCore import Qt,QPoint,QSize
+from PySide6.QtWidgets import QTextBrowser,QComboBox,QPushButton,QLabel,QTabWidget
+from PySide6.QtGui import QFont
+from PySide6.QtCore import Qt
 
 def _math(text):
     """Escaped, readable equation text; fractions use Qt's HTML table engine."""
@@ -17,7 +18,7 @@ def _math(text):
 def _math_equation(expression, fraction):
     """Use 10 pt for equations and fractions, matching the dimension inputs."""
     if fraction is None:
-        return ('<p style="margin:3px 0 3px 14px;font-size:10pt;color:#233a50;">'
+        return ('<p style="margin:3px 0 3px 14px;font-size:10pt;color:#242424;">'
                 + _math(expression) + '</p>')
     lhs, numer, denom, suffix = fraction
     return ('<table cellspacing="0" cellpadding="0" style="margin-left:13px;">'
@@ -158,12 +159,12 @@ def html_breakdown(inputs,output,key,places):
     status="PASS" if c["uf_vm"]<=1 and (c["uf_tau"] is None or c["uf_tau"]<=1) else "FAIL"
     colour="#18805b" if status=="PASS" else "#bb2b23"
     heading=("Working pressure" if key=="working" else "Test pressure")+": "+f"{c['pressure']:.0f} psi"
-    lines=['<html><body style="font-family:Segoe UI,Arial,sans-serif;color:#233a50;font-size:10pt;">',
+    lines=['<html><body style="font-family:Segoe UI,Arial,sans-serif;color:#242424;font-size:10pt;">',
         '<table width="100%" cellspacing="0" cellpadding="0" style="margin:0;">',
         '<tr><td width="78%" valign="middle"><p style="font-size:12pt;color:#164f8a;margin:3px 0 4px 0;"><b>'+escape(heading)+'</b></p></td>',
         '<td align="right" valign="middle"><p style="font-size:12pt;color:'+colour+';margin:3px 0 4px 0;"><b>'+status+'</b></p></td></tr></table>',
-        '<p style="font-size:9pt;color:#657a91;margin:4px 0 0 0;">'+escape(output["wall_type"]+(" (Lamé)" if output["wall_type"]=="Thick Wall" else " (Membrane)")+f" | VM utilisation: {c['uf_vm']:.2f}"+(f" | Shear utilisation: {c['uf_tau']:.2f}" if c["uf_tau"] is not None else ""))+'</p>',
-        '<p style="font-size:9pt;color:#657a91;margin:0 0 12px 0;">Calculation basis: '+escape(roark_case_reference(inputs,output))+'</p>',
+        '<p style="font-size:9pt;color:#667c94;margin:4px 0 0 0;">'+escape(output["wall_type"]+(" (Lamé)" if output["wall_type"]=="Thick Wall" else " (Membrane)")+f" | VM utilisation: {c['uf_vm']:.2f}"+(f" | Shear utilisation: {c['uf_tau']:.2f}" if c["uf_tau"] is not None else ""))+'</p>',
+        '<p style="font-size:9pt;color:#667c94;margin:0 0 12px 0;">Calculation basis: '+escape(roark_case_reference(inputs,output))+'</p>',
         _section_rule(),'<p style="font-size:10pt;margin:13px 0 18px 0;color:#164f8a;"><b>Input Values</b></p>',
         '<p style="font-size:1pt;margin:0 0 12px 0;">&nbsp;</p>',
         '<table cellspacing="0" cellpadding="3" width="100%" style="font-size:10pt;">']
@@ -174,55 +175,22 @@ def html_breakdown(inputs,output,key,places):
     for i,s in enumerate(steps,1):
         lines += ['<p style="font-size:10pt;margin:18px 0 7px 0;color:#164f8a;"><b>'+str(i)+'. '+escape(s.title)+'</b></p>',
                   _math_equation(s.symbolic,s.symbol_fraction),
-                  '<p style="font-size:9pt;color:#667f94;margin:6px 0 4px 13px;">Substitution</p>',
+                  '<p style="font-size:9pt;color:#667c94;margin:6px 0 4px 13px;">Substitution</p>',
                   _math_equation(s.numeric,s.numeric_fraction),
                   '<p style="font-size:10pt;margin:7px 0 3px 13px;color:#164f8a;"><b>Result: '+f'{s.result:.{places}f}'+(' '+escape(s.unit) if s.unit else '')+'</b></p>']
         if s.note:
-            lines.append('<p style="font-size:9pt;margin:5px 0 12px 13px;color:#577189;">'+escape(s.note)+'</p>')
+            lines.append('<p style="font-size:9pt;margin:5px 0 12px 13px;color:#667c94;">'+escape(s.note)+'</p>')
     if output["wall_type"]=="Thin Wall":
-        lines.append('<p style="font-size:9pt;color:#577189;margin:12px 0 8px 13px;">Separate shear assessment is not calculated by the existing thin-wall method.</p>')
+        lines.append('<p style="font-size:9pt;color:#667c94;margin:12px 0 8px 13px;">Separate shear assessment is not calculated by the existing thin-wall method.</p>')
     if inputs["pressure_type"]=="external":
-        lines.append('<p style="font-size:9pt;color:#577189;margin:12px 0 8px 13px;">External-pressure buckling is not assessed.</p>')
+        lines.append('<p style="font-size:9pt;color:#667c94;margin:12px 0 8px 13px;">External-pressure buckling is not assessed.</p>')
     lines.append('</body></html>')
     return '\n'.join(lines)
-
-class PrecisionDelegate(QStyledItemDelegate):
-    def sizeHint(self,option,index):
-        return QSize(190,30)
-    def paint(self,painter,option,index):
-        painter.save()
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        r=option.rect.adjusted(3,2,-3,-2)
-        if option.state & QStyle.StateFlag.State_Selected:
-            painter.setPen(Qt.PenStyle.NoPen)
-            painter.setBrush(QColor("#e5f1fc"))
-            painter.drawRoundedRect(r,4,4)
-            painter.setBrush(QColor("#258aca"))
-            painter.drawRoundedRect(r.adjusted(1,5,1-r.width()+2,-5),1,1)
-        painter.setPen(QColor("#243d58"))
-        painter.setFont(option.font)
-        painter.drawText(option.rect.adjusted(10,0,-5,0),int(Qt.AlignmentFlag.AlignVCenter|Qt.AlignmentFlag.AlignLeft),str(index.data()))
-        painter.restore()
-
-class PrecisionCombo(QComboBox):
-    def showPopup(self):
-        super().showPopup()
-        popup=self.view().window()
-        if not popup.isVisible():return
-        # Retain Qt's native selection handling, but anchor the Fusion
-        # popup to the control's edge, as in the Windows 11 reference.
-        bounds=self.screen().availableGeometry()
-        below=self.mapToGlobal(QPoint(0,self.height()))
-        above=self.mapToGlobal(QPoint(0,0))
-        x=max(bounds.left(),min(below.x(),bounds.right()-popup.width()+1))
-        y=below.y() if below.y()+popup.height()<=bounds.bottom()+1 else above.y()-popup.height()
-        y=max(bounds.top(),min(y,bounds.bottom()-popup.height()+1))
-        popup.move(x,y)
 
 def build_inspect_results(inputs,output,parent):
     f=QFile(str(Path(__file__).parent/"ui/inspect_results.ui"))
     if not f.open(QIODevice.OpenModeFlag.ReadOnly):raise RuntimeError("Inspector form missing")
-    loader=QUiLoader();loader.registerCustomWidget(PrecisionCombo)
+    loader=QUiLoader()
     try:dialog=loader.load(f,parent)
     finally:f.close()
     dialog.setParent(parent,dialog.windowFlags())
@@ -235,23 +203,16 @@ def build_inspect_results(inputs,output,parent):
         QTabWidget::pane {background:white;border:1px solid #e7e7e7;border-radius:4px;}
         QTabBar::tab {background:#f1f1f1;border:1px solid #e5e5e5;border-top-left-radius:5px;border-top-right-radius:4px;padding:4px 11px;color:#344556;}
         QTabBar::tab:selected {background:white;color:#1b3452;border-bottom-color:white;}
-        QTextBrowser {background:white;border:1px solid #e7e7e7;border-radius:4px;color:#233a50;}
+        QTextBrowser {background:white;border:1px solid #e7e7e7;border-radius:4px;color:#242424;}
         QComboBox {background:white;border:1px solid #b9cce1;border-radius:4px;min-height:22px;padding:1px 4px;color:#243d58;}
-        QComboBox:focus {border:2px solid #258aca;}
-        QComboBox QAbstractItemView {background:white;color:#243d58;border:1px solid #d8e4f0;outline:0;selection-background-color:#e5f1fc;selection-color:#243d58;padding:2px;}
-        QComboBox QAbstractItemView::item {min-height:26px;padding:1px 7px;border-radius:3px;}
-        QComboBox QAbstractItemView::item:selected {background:#e5f1fc;color:#243d58;}
-        QComboBox QAbstractItemView::item:hover {background:#e5f1fc;color:#243d58;}
+        QComboBox:focus {border:2px solid #258aca;padding:0px 3px;}
         """)
     controls={}
     for key in ("working","test"):
         precision=dialog.findChild(QComboBox,key+"_precision")
         browser=dialog.findChild(QTextBrowser,key+"_text")
-        # Fusion normally overlays the current item on the closed field.
-        # Match the Windows reference with a list-style popup instead.
-        precision.setItemDelegate(PrecisionDelegate(precision))
         precision.setMaxVisibleItems(7)
-        precision.setFixedWidth(210)
+        precision.setFixedSize(210,26)
         precision.addItems([f"{x} DP" for x in range(7)])
         precision.setCurrentIndex(3)
         browser.setOpenExternalLinks(False)
@@ -265,11 +226,14 @@ def build_inspect_results(inputs,output,parent):
             basis=getattr(parent,"geometry_basis","")
             if basis.startswith("Physical"):
                 note="For diameter/thickness input, both tabs show the same physical geometry governing maximum utilisation. Individual criteria are evaluated at that geometry, not separately maximised."
-                html=html.replace("</body>",'<p style="font-size:9pt;color:#577189;margin:12px 0 8px 13px;">'+escape(note)+'</p></body>')
+                html=html.replace("</body>",'<p style="font-size:9pt;color:#667c94;margin:12px 0 8px 13px;">'+escape(note)+'</p></body>')
             browser.setHtml(html)
             browser.verticalScrollBar().setValue(pos)
-    for precision,_ in controls.values():precision.currentIndexChanged.connect(redraw)
+    for combo, browser in controls.values():
+        combo.currentIndexChanged.connect(redraw)
+        return_focus_after_selection(combo, browser)
     close=dialog.findChild(QPushButton,"close_inspection")
     close.setFixedSize(106,30);close.clicked.connect(dialog.accept)
     redraw(3)
+    apply_dialog_theme(dialog)
     return dialog

@@ -5,9 +5,10 @@ from tempfile import TemporaryDirectory
 from datetime import datetime
 from decimal import Decimal as D
 from unittest.mock import patch
-from PySide6.QtCore import Qt,QEventLoop,QTimer,QSettings
+from PySide6.QtCore import Qt,QEventLoop,QTimer,QSettings,QPoint
 from PySide6.QtWidgets import QApplication,QComboBox,QTextBrowser,QFileDialog
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QPixmap,QCursor
+from PySide6.QtTest import QTest
 from cases import calculate_case
 from app_info import APP_VERSION
 from inspect_results import case_steps
@@ -119,11 +120,16 @@ def run(app,w):
                 c=d.findChild(QComboBox,key+"_precision")
                 assert c.width()==210
                 for idx in (0,3,6):
-                    c.setCurrentIndex(idx);c.showPopup();app.processEvents()
-                    assert c.view().isVisible()
-                    g=c.view().window().geometry();bottom=c.mapToGlobal(c.rect().bottomLeft())
-                    assert abs(g.top()-bottom.y())<=3 or abs(g.bottom()-c.mapToGlobal(c.rect().topLeft()).y())<=3
-                    c.hidePopup();app.processEvents()
+                    c.setCurrentIndex(idx);d.activateWindow();c.setFocus()
+                    pt=QPoint(c.width()-10,c.height()//2);QCursor.setPos(c.mapToGlobal(pt));QTest.qWait(50)
+                    QTest.keyClick(c,Qt.Key.Key_Down,Qt.KeyboardModifier.AltModifier);QTest.qWait(180)
+                    if not c.view().isVisible():QTest.mouseClick(c,Qt.MouseButton.LeftButton,pos=pt);QTest.qWait(180)
+                    assert c.view().isVisible(), 'native precision popup did not open'
+                    g=c.view().window().geometry();bottom=c.mapToGlobal(c.rect().bottomLeft());top=c.mapToGlobal(c.rect().topLeft())
+                    assert c.screen().availableGeometry().contains(g),g
+                    assert abs(g.left()-bottom.x())<=4 and (abs(g.top()-bottom.y())<=8 or abs(g.bottom()-top.y())<=8),(g,bottom,top)
+                    QTest.keyClick(c.view(),Qt.Key.Key_Escape);QTest.qWait(100)
+                    assert not c.view().isVisible() and not c.hasFocus()
                 c.setCurrentIndex(5)
                 assert d.findChild(QComboBox,("test" if i==0 else "working")+"_precision").currentIndex()==5
                 assert "Calculation Breakdown" in d.findChild(QTextBrowser,key+"_text").toPlainText()
@@ -133,7 +139,7 @@ def run(app,w):
             assert "PASS means the individual stress utilisation is no greater than 1.00." in d.assumptions_text_2.text()
             assert "buckling" not in d.assumptions_text_2.text().lower()
             assert "full code compliance" not in d.assumptions_text_2.text().lower()
-            assert d.references_note.text()=="Reference publications are not distributed with the application."
+            assert d.findChild(type(d.about_text),"references_note") is None
             assert "radial stress is zero at the bore" in d.assumptions_text_1.text()
             assert "same radial location" in d.assumptions_text_1.text()
             assert "identical Von Mises and maximum shear" in d.assumptions_text_1.text()

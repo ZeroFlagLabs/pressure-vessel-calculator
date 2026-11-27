@@ -10,6 +10,7 @@ from PySide6.QtGui import QDesktopServices
 from PySide6.QtGui import QIcon, QFont, QColor, QPainter, QPen, QPixmap, QShortcut, QKeySequence
 from PySide6.QtWidgets import *
 from dialog_position import exec_centered
+from dialog_theme import apply_dialog_theme, ensure_light_scheme, set_settings_identity
 from cases import calculate_case
 from input_validation import validate_inputs
 from geometry_selection import select_geometry
@@ -28,7 +29,7 @@ QGroupBox {background:#ffffff;border:1px solid #d8e4f0;border-radius:6px;margin-
 QGroupBox::title {subcontrol-origin:margin;subcontrol-position:top left;left:10px;top:2px;padding:0 4px;color:#164f8a;}
 QLineEdit,QDoubleSpinBox,QAbstractSpinBox,QComboBox {background:white;border:1px solid #b9cce1;border-radius:4px;min-height:26px;padding:1px 4px;color:#243d58;}
 QDoubleSpinBox:disabled {background:#e3e8ee;border-color:#c4cdd8;color:#8190a1;}
-QLineEdit:focus,QDoubleSpinBox:focus,QAbstractSpinBox:focus,QComboBox:focus {border:2px solid #258aca;}
+QLineEdit:focus,QDoubleSpinBox:focus,QAbstractSpinBox:focus,QComboBox:focus {border:2px solid #258aca;padding:0px 3px;}
 QAbstractSpinBox {padding-right:18px;}
 QAbstractSpinBox::up-button,QAbstractSpinBox::down-button {subcontrol-origin:padding;width:14px;background:transparent;border:none;right:3px;}
 QAbstractSpinBox::up-button {subcontrol-position:top right;top:1px;}
@@ -285,6 +286,7 @@ class CaseRadio(QRadioButton):
 
 class MainWindow(QMainWindow):
     def __init__(self):
+        ensure_light_scheme()
         super().__init__();self.setWindowTitle(APP_TITLE)
         self.setWindowIcon(QIcon(str(ICONS/"icon.ico")))
         self.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint,False)
@@ -471,6 +473,7 @@ class MainWindow(QMainWindow):
         d.check_on_launch.setChecked(checker.enabled())
         d.check_on_launch.toggled.connect(checker.set_enabled)
         d.check_now_button.clicked.connect(checker.check)
+        set_settings_identity(d, APP_TITLE, APP_VERSION, 'Cylindrical pressure vessel stress assessment for internal and external pressure, open and capped ends, and optional axial loading.')
         d.github_link.setText(f'<a href="{GITHUB_URL}">Project on GitHub</a>')
         d.github_link.setOpenExternalLinks(True)
         def refresh():
@@ -484,6 +487,7 @@ class MainWindow(QMainWindow):
             except (RuntimeError,TypeError):pass
         d.open_release_button.clicked.connect(open_release)
         checker.state_changed.connect(refresh);d.finished.connect(disconnect);refresh()
+        apply_dialog_theme(d)
         return d
     def update_notice(self):
         if self.update_checker.release_url:self.statusBar().showMessage(self.update_checker.status)
@@ -522,7 +526,13 @@ def main():
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("ZeroFlagLabs.PressureVesselCalculator")
     app=QApplication(sys.argv);app.setStyle("Fusion");app.setApplicationName(APP_TITLE)
     app.setWindowIcon(QIcon(str(ICONS/"icon.ico")))
+    if "--dialogue-test" in sys.argv:
+        from dialogue_acceptance import prepare_scheme
+        prepare_scheme(app)
     w=MainWindow();w.show()
+    if "--dialogue-test" in sys.argv:
+        from dialogue_acceptance import run_for_window
+        return run_for_window(app,w)
     if "--self-test" in sys.argv:
         from runtime_check import run
         return run(app,w)
